@@ -58,3 +58,33 @@ let prob12_firstHundredFibonacci () =
         yield! (fib m (n + m))
     }
     fib 0L 1L |> Seq.take 100
+
+
+(*
+Write a function that takes a list of strings an prints 
+them, one per line, in a rectangular frame. 
+For example the list ["Hello", "World", "in", "a", "frame"] 
+gets printed as:
+
+*********
+* Hello *
+* World *
+* in    *
+* a     *
+* frame *
+*********
+*)
+
+let prob17_textInABox (words : string list) = 
+    let longestWord = words |> List.maxBy (fun w -> w.Length)
+
+    let boxWidth = longestWord.Length + 4
+    let topOrdbottom = (String.replicate boxWidth "*") + "\r\n"
+
+    let boxMiddle =
+        words 
+        |> List.fold (fun result word -> 
+                        let paddedWord = word.PadRight(longestWord.Length)
+                        result + (sprintf "* %s *\r\n" paddedWord)) ""
+
+    String.Concat(topOrdbottom, boxMiddle, topOrdbottom)

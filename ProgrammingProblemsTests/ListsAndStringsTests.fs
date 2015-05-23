@@ -30,3 +30,16 @@ let ``Prob 12 - 100 Fibonacci test``() =
     ListsAndStrings.prob12_firstHundredFibonacci () 
     |> Seq.take 10
     |> should equal [0; 1; 1; 2; 3; 5; 8; 13; 21; 34 ]
+
+
+[<Test>]
+let ``Prob 17 - Put words in a box``() =
+    ListsAndStrings.prob17_textInABox ["Hello"; "World"; "in"; "a"; "frame"] 
+    |> should equal "*********
+* Hello *
+* World *
+* in    *
+* a     *
+* frame *
+*********
+"
