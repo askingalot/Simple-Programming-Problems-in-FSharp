@@ -25,6 +25,30 @@ let ``Prob 10 - myZip test``() =
     ListsAndStrings.prob10_myZip [1; 3; 5] [2; 4; 6]
     |> should equal [1; 2; 3; 4; 5; 6]
 
+
+[<Test>]
+let ``Prob 11 - mergeSortedLists empty lists``() =
+    ListsAndStrings.prob11_mergeSortedLists [] []
+    |> should equal []
+[<Test>]
+let ``Prob 11 - mergeSortedLists second empty list``() =
+    ListsAndStrings.prob11_mergeSortedLists [1; 2] []
+    |> should equal [1; 2]
+[<Test>]
+let ``Prob 11 - mergeSortedLists first empty list``() =
+    ListsAndStrings.prob11_mergeSortedLists [] [1; 2] 
+    |> should equal [1; 2]
+[<Test>]
+let ``Prob 11 - mergeSortedLists equal length lists``() =
+    let res = ListsAndStrings.prob11_mergeSortedLists [4; 5] [1; 2] 
+    res |> should equal [1; 2; 4; 5]
+[<Test>]
+let ``Prob 11 - mergeSortedLists string lists``() =
+    let res = ListsAndStrings.prob11_mergeSortedLists ["c"; "z"] ["a"; "b"; "y"] 
+    res |> should equal ["a"; "b"; "c"; "y"; "z"]
+
+
+
 [<Test>]
 let ``Prob 12 - 100 Fibonacci test``() =
     ListsAndStrings.prob12_firstHundredFibonacci () 

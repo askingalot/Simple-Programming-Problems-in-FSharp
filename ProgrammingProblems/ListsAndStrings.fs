@@ -42,6 +42,25 @@ let prob10_myZip alist blist =
 
 
 (*
+Write a function that merges two sorted lists into a new list.
+*)
+let prob11_mergeSortedLists alist blist =
+    let rec mergeSortedLists alist blist result = 
+        match alist, blist with
+        | [], [] -> result
+        | [], bh::bt -> 
+            mergeSortedLists [] bt (bh :: result)
+        | ah::at, [] -> 
+            mergeSortedLists at [] (ah :: result)
+        | ah::at, bh::bt when ah < bh -> 
+            mergeSortedLists at blist (ah :: result)
+        | ah::at, bh::bt ->
+            mergeSortedLists alist bt (bh :: result)
+
+    mergeSortedLists alist blist [] 
+    |> List.rev
+
+(*
 Write a function that computes the list of the first 
 100 Fibonacci numbers. By definition, the first two 
 numbers in the Fibonacci sequence are 0 and 1, 
