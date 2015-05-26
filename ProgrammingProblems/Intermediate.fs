@@ -12,14 +12,12 @@ result is always 100.
 For example: 1 + 2 + 34 – 5 + 67 – 8 + 9 = 100.
 *)
 type NumberNode = { value: string; next: NumberNode option }
-let numberList = 
-    [8..-1..1]
-    |> List.fold (fun nextNode curNumber -> 
-                    { value = (string curNumber); next = Some(nextNode) } )
-                 { value = "9"; next = None }
-
 let prob1_allEqualing100 () =
-    let thoseEqualing100 = new List<String>()
+    let numberList = 
+        [8..-1..1]
+        |> List.fold (fun nextNode curNumber -> 
+                        { value = (string curNumber); next = Some(nextNode) } )
+                 { value = "9"; next = None }
 
     let calculateTotal (equation: string) = 
         let headAsInt list = Int32.Parse(List.head list)
@@ -37,16 +35,17 @@ let prob1_allEqualing100 () =
             0 
             (equation.Split(' ') |> List.ofArray)
 
-    let rec depthFirstTraverse stringRepresentation tree =
+    let rec depthFirstTraverse stringRepresentation tree curSolutions =
         match tree.next with
         | Some(next) -> 
-            depthFirstTraverse (stringRepresentation + " + " + next.value) next
-            depthFirstTraverse (stringRepresentation + " - " + next.value) next
-            depthFirstTraverse (stringRepresentation + next.value) next
+            curSolutions 
+            |> depthFirstTraverse (stringRepresentation + " + " + next.value) next
+            |> depthFirstTraverse (stringRepresentation + " - " + next.value) next
+            |> depthFirstTraverse (stringRepresentation + next.value) next
         | None when (calculateTotal stringRepresentation) = 100 ->
-            thoseEqualing100.Add(stringRepresentation)
-        | _ -> ()
+            stringRepresentation :: curSolutions
+        | _ -> curSolutions
 
-    depthFirstTraverse "1" numberList
-
-    thoseEqualing100.ToArray()
+    depthFirstTraverse "1" numberList []
+    |> List.rev
+    |> Array.ofList
