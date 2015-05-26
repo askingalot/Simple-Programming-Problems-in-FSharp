@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="ListsAndStrings.fs" />
     <Compile Include="Intermediate.fs" />
+    <Compile Include="Advanced.fs" />
     <None Include="App.config" />
     <Compile Include="Program.fs" />
   </ItemGroup>

@@ -78,11 +78,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NUnitRunner.fs" />
-    <Compile Include="IntermediateTests.fs" />
+    <Compile Include="AdvancedTests.fs" />
     <None Include="Script.fsx" />
     <None Include="packages.config" />
     <None Include="App.config" />
     <Compile Include="ListsAndStringsTests.fs" />
+    <Compile Include="IntermediateTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProgrammingProblems\ProgrammingProblems.fsproj">
