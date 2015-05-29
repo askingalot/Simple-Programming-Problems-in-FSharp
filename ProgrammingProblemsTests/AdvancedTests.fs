@@ -19,3 +19,9 @@ let ``Prob 1 - multiple substrings``() =
     let result = Advanced.prob1_longestSubstring "abcabbaabb" "abcbbb"
     result 
     |> should equal "abc"
+
+[<Test>]
+let ``Prob 1 - deep substring``() =
+    let result = Advanced.prob1_longestSubstring "xxxabca bbbb aabbbbxxx" "abcbbbb"
+    result 
+    |> should equal "bbbb"
