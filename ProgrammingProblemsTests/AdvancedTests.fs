@@ -25,3 +25,8 @@ let ``Prob 1 - deep substring``() =
     let result = Advanced.prob1_longestSubstring "xxxabca bbbb aabbbbxxx" "abcbbbb"
     result 
     |> should equal "bbbb"
+
+[<Test>]
+let ``Prob 6 - english to morse code``() =
+    Advanced.prob6_englishToMorseCode "A A"
+    |> should equal [Advanced.Dot; Advanced.Dash; Advanced.Space; Advanced.Space; Advanced.Space; Advanced.Dot; Advanced.Dash];

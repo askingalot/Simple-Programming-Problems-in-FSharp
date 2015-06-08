@@ -34,3 +34,51 @@ let prob1_longestSubstring (string1: char seq) (string2: char seq) =
     |> List.rev
 
 
+
+(*
+Write a program that automatically converts English text to Morse code and vice versa.
+*)
+(*
+I'm going with international Morse code as described by wikipeida:
+https://en.wikipedia.org/wiki/Morse_code
+https://en.wikipedia.org/wiki/Morse_code#/media/File:International_Morse_Code.svg
+*)
+type MorseCode = 
+    | Dot 
+    | Dash
+    | Space
+
+
+let prob6_englishToMorseCode (englishText : string) =
+    let words = englishText.Trim().ToUpper().Split(' ') |> List.ofArray
+
+    let charToMorse = function 
+        | 'A' -> [Dot; Dash]
+        | 'B' -> [Dash; Dot; Dot; Dot]
+        | 'C' -> [Dash; Dot; Dash; Dot]
+        | 'D' -> [Dash; Dot; Dot]
+        | 'E' -> [Dot]
+        | 'F' -> [Dot; Dot; Dash; Dot]
+        | 'G' -> [Dash; Dash; Dot]
+        | 'H' -> [Dot; Dot; Dot; Dot]
+        | 'I' -> [Dot; Dot]
+        | _ -> failwith "I didn't feel like doing any more"
+        
+    let rec intersperse sep = function
+        | [] -> []
+        | last :: [] -> [last]
+        | h :: t -> h :: sep :: intersperse sep t
+
+    words 
+    |> List.map (
+        fun word ->
+            word.ToCharArray()
+            |> List.ofArray
+            |> List.map charToMorse
+            |> intersperse [Space; Space; Space]
+            |> List.concat)
+    |> intersperse [Space; Space; Space; Space; Space; Space; Space]
+    |> List.concat
+
+
+
