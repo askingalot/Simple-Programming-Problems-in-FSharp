@@ -1,11 +1,12 @@
 #load "lib/data.fsx"
 #load "lib/types.fsx"
 #load "lib/io.fsx"
+#load "ai.fsx"
 
 open System
 open System.Threading
 
-let secretWord words =
+let getSecretWord words =
   let isInitCap (word: string) =
     let upperWord = word.ToUpper()
     word.[0] = upperWord.[0]
@@ -18,8 +19,7 @@ let secretWord words =
 
 
 let allGuessed guessedLetters word =
-  word |> String.forall (fun w -> guessedLetters
-                                  |> String.exists ((=) w))
+  word |> String.forall (fun w -> String.exists ((=) w) guessedLetters)
 
 let isWon (game: Types.GameState) =
   game.secretWord |> allGuessed game.guessedLetters
@@ -30,6 +30,11 @@ let containsGuess letter (word: string) =
 let isLost (game: Types.GameState) =
   game.incorrectCount = game.maxIncorrectCount
 
+let getWordSoFar guessedLetters word =
+  word |> String.collect (fun w ->
+                            if String.exists ((=) w) guessedLetters
+                            then w.ToString()
+                            else Data.letterMask )
 
 
 let rec gameLoop (game: Types.GameState) =
@@ -38,26 +43,28 @@ let rec gameLoop (game: Types.GameState) =
 
   if game |> isLost then
     IO.printLost game.secretWord
-    ()
   else if game |> isWon then
     IO.printWon ()
-    ()
   else
-    let guess =
-      IO.getGuess { guessedLetters = game.guessedLetters
-                  ; wordSoFar      = game.wordSoFar }
+    let guess = AI.getGuess { guessedLetters = game.guessedLetters
+                            ; wordSoFar      = game.wordSoFar }
+
+    let guessedLetters = game.guessedLetters + guess
+    let wordSoFar = getWordSoFar guessedLetters game.secretWord
 
     if game.secretWord |> containsGuess guess then
-      gameLoop { game with guessedLetters = game.guessedLetters + guess }
+      gameLoop { game with guessedLetters = guessedLetters
+                         ; wordSoFar      = wordSoFar }
     else
       gameLoop { game with incorrectCount = game.incorrectCount + 1
-                         ; guessedLetters = game.guessedLetters + guess }
+                         ; guessedLetters = guessedLetters
+                         ; wordSoFar      = wordSoFar }
 
 
-
-gameLoop { secretWord        = secretWord (IO.readWordsFile ())
+let secretWord = getSecretWord (IO.readWordsFile ())
+gameLoop { secretWord        = secretWord
          ; guessedLetters    = ""
-         ; wordSoFar         = ""
+         ; wordSoFar         = getWordSoFar "" secretWord
          ; incorrectCount    = 0
          ; maxIncorrectCount = (Array.length Data.hangman) - 1 }
 
