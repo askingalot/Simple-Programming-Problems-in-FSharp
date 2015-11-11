@@ -36,7 +36,7 @@ let printWordSoFar game =
                     fun swLetter ->
                       if game.guessedLetters |> String.exists ((=) swLetter)
                       then swLetter.ToString()
-                      else Data.letterMask)
+                      else Data.letterMask.ToString())
   printf "Secret Word: %s\n" wordSoFar
 
 let printGuessed guessedLetters =

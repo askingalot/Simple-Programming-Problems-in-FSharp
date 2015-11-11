@@ -1,5 +1,6 @@
 module AI
 
+#load "lib/data.fsx"
 #load "lib/types.fsx"
 #load "lib/io.fsx"
 
@@ -7,50 +8,41 @@ open System
 open System.Threading
 
 type Player(allWords: string[]) =
-  let letterChoices = Array.ofSeq "esrtalinybcdfghjkmopquvwxz"
-  let mutable candidateWords = allWords
+  let lettersOrderedByFrequency letters =
+    letters
+    |> Seq.groupBy (fun l -> l)
+    |> Seq.sortBy (fun (l, ls) -> (Seq.length ls) * -1)
+    |> Seq.map (fun (l, ls) -> l)
+    |> Array.ofSeq
+
+  let filterCandidates (wordSoFar: string) (candidateWords: string[]) =
+    candidateWords
+    |> Array.filter (
+        fun candidate ->
+          candidate.Length = wordSoFar.Length
+          &&
+          (Seq.zip candidate wordSoFar)
+           |> Seq.forall (fun (c, w) -> c = w || w = Data.letterMask))
+
+  let rec getUnusedLetter (letterChoices: char[]) (guessedLetters: string) index =
+    let guess = (letterChoices.[index]).ToString()
+
+    if guessedLetters.Contains(guess)
+    then getUnusedLetter letterChoices guessedLetters (index + 1)
+    else guess
 
   member this.GetGuess (userGameData: Types.UserGameData) =
-    let rec getGuess (letterChoices: char[]) =
-      let randomIndex = Random().Next(letterChoices.Length)
-      let guess = letterChoices.[randomIndex].ToString()
 
-      if userGameData.guessedLetters.Contains(guess)
-      then getGuess letterChoices
-      else guess
+    let letterChoices =
+      allWords
+      |> filterCandidates userGameData.wordSoFar
+      |> String.concat ""
+      |> lettersOrderedByFrequency
 
-(*
-    printf "%A\n" userGameData
-    printf "%d\n" candidateWords.Length
-    printf "%A\n" candidateWords
-*)
+    let guess = getUnusedLetter letterChoices userGameData.guessedLetters 0
 
-    candidateWords <-
-      candidateWords
-      |> Array.filter (
-          fun candidate ->
-            candidate.Length = userGameData.wordSoFar.Length )
-
-    let letterChoices = Array.ofSeq (String.concat "" candidateWords)
-    let guess = getGuess letterChoices
-    Console.WriteLine(guess)
+    printf "%s" guess
     Thread.Sleep(1000)
-    //Console.ReadKey () |> ignore
     guess
 
 
-let player = Player(IO.readWordsFile ())
-let getGuess (userGameData: Types.UserGameData) =
-  player.GetGuess(userGameData)
-
-(*
-let rec getGuess (userGameData: Types.UserGameData) =
-  let line = Console.ReadLine()
-  let guess = if line <> String.Empty
-              then line.[0].ToString()
-              else String.Empty
-
-  if userGameData.guessedLetters.Contains(guess)
-  then getGuess userGameData
-  else guess
-*)

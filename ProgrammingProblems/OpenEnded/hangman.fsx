@@ -4,18 +4,22 @@
 #load "ai.fsx"
 
 open System
-open System.Threading
 
-let getSecretWord words =
+let getCanddiateSecretWords words =
   let isInitCap (word: string) =
     let upperWord = word.ToUpper()
     word.[0] = upperWord.[0]
 
   words
+  |> Array.filter (fun w -> (String.length w) >= Data.minWordLength &&
+                            (String.length w) <= Data.maxWordLength &&
+                            not (isInitCap w))
+
+let getSecretWord words =
+  words
   |> Seq.skip (Random().Next(Array.length words))
-  |> Seq.find (fun w -> (String.length w) >= Data.minWordLength &&
-                        (String.length w) <= Data.maxWordLength &&
-                        not (isInitCap w))
+  |> Seq.head
+
 
 
 let allGuessed guessedLetters word =
@@ -34,7 +38,15 @@ let getWordSoFar guessedLetters word =
   word |> String.collect (fun w ->
                             if String.exists ((=) w) guessedLetters
                             then w.ToString()
-                            else Data.letterMask )
+                            else Data.letterMask.ToString() )
+
+
+
+let allWords = IO.readWordsFile ()
+let candidates = getCanddiateSecretWords allWords
+let secretWord = getSecretWord candidates
+let player = AI.Player(candidates)
+
 
 
 let rec gameLoop (game: Types.GameState) =
@@ -46,8 +58,12 @@ let rec gameLoop (game: Types.GameState) =
   else if game |> isWon then
     IO.printWon ()
   else
-    let guess = AI.getGuess { guessedLetters = game.guessedLetters
+    let guess = player.GetGuess { guessedLetters = game.guessedLetters
+                                ; wordSoFar      = game.wordSoFar }
+    (*
+    let guess = IO.getGuess { guessedLetters = game.guessedLetters
                             ; wordSoFar      = game.wordSoFar }
+    *)
 
     let guessedLetters = game.guessedLetters + guess
     let wordSoFar = getWordSoFar guessedLetters game.secretWord
@@ -61,7 +77,6 @@ let rec gameLoop (game: Types.GameState) =
                          ; wordSoFar      = wordSoFar }
 
 
-let secretWord = getSecretWord (IO.readWordsFile ())
 gameLoop { secretWord        = secretWord
          ; guessedLetters    = ""
          ; wordSoFar         = getWordSoFar "" secretWord
