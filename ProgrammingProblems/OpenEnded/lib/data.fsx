@@ -2,8 +2,8 @@ module Data
 
 let wordFilePath = "/usr/share/dict/words"
 let letterMask = '.'
-let minWordLength = 6
-let maxWordLength = 10
+let minWordLength = 3
+let maxWordLength = 5
 
 let hangman = [|@"_____
 |

@@ -31,6 +31,10 @@ type Player(allWords: string[]) =
     then getUnusedLetter letterChoices guessedLetters (index + 1)
     else guess
 
+  let printAndPassAlong theObj =
+    printf "%A" theObj
+    theObj
+
   member this.GetGuess (userGameData: Types.UserGameData) =
 
     let letterChoices =
@@ -38,6 +42,7 @@ type Player(allWords: string[]) =
       |> filterCandidates userGameData.wordSoFar
       |> String.concat ""
       |> lettersOrderedByFrequency
+      //|> printAndPassAlong
 
     let guess = getUnusedLetter letterChoices userGameData.guessedLetters 0
 
